@@ -5,9 +5,11 @@
     <title>Weryfikacja dostępu...</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const SUPABASE_URL = "https://vmsolpcoepvbyofidclh.supabase.co";
+        // Twój aktualny, prawdziwy URL projektu z Supabase
+        const SUPABASE_URL = "https://zuvzbxgtzwbcdkjjyzgg.supabase.co";
         
-        // Zastosowałem ukośne cudzysłowy (backticki ` `), które naprawią błąd "line break"
+        // TUTAJ wklejasz swój bardzo długi klucz anon public (zaczynający się od eyJ...)
+        // Zostaw te ukośne znaczki ` ` na początku i końcu klucza!
         const SUPABASE_KEY = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1dnpieGd0endiY2Rramp5emdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1Njc0NTAsImV4cCI6MjA5NjE0MzQ1MH0.bLpNh9YZJ9xqLM08t4LW7uguV1eL-lth8tCfDRzgev8`;
 
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -26,15 +28,15 @@
                     return;
                 }
 
-                // Szukamy tokenu w bazie (tabela: linki-dostepp)
+                // Szukamy w tabeli 'linki-dostepp' (z dwoma p)
                 const { data, error } = await supabase
                     .from('linki-dostepp')
                     .select('*')
                     .eq('token', token)
-                    .single();
+                    .maybeSingle();
 
                 if (error || !data) {
-                    zablokujStrone("Nieprawidłowy token dostępu!");
+                    zablokujStrone("Nieprawidłowy lub nieaktywny token dostępu!");
                     return;
                 }
 
@@ -46,7 +48,7 @@
                         return;
                     }
 
-                    // Zwiększamy licznik urządzeń o 1
+                    // Aktualizacja w tabeli 'linki-dostepp'
                     await supabase
                         .from('linki-dostepp')
                         .update({ uzyte_urzadzenia: Number(data.uzyte_urzadzenia) + 1 })
@@ -56,11 +58,10 @@
                     localStorage.setItem('pwa_zalogowany', token);
                 }
 
-                // Przekierowanie do Twojej właściwej strony
                 window.location.href = "aplikacja.html";
 
             } catch (err) {
-                zablokujStrone("Wystąpił błąd krytyczny aplikacji: " + err.message);
+                zablokujStrone("Wystąpił błąd systemu: " + err.message);
             }
         }
 
@@ -68,8 +69,8 @@
             document.body.innerHTML = `
                 <div style="display:flex; justify-content:center; align-items:center; height:100vh; background:#111; color:#fff; font-family:sans-serif; text-align:center; padding:20px;">
                     <div>
-                        <h1 style="color:#ff4a4a;">Brak dostępu</h1>
-                        <p>${komunikat}</p>
+                        <h1 style="color:#ff4a4a; font-size: 28px; margin-bottom: 10px;">Brak dostępu</h1>
+                        <p style="color:#ccc; font-size: 16px;">${komunikat}</p>
                     </div>
                 </div>
             `;
@@ -78,6 +79,6 @@
         window.onload = sprawdzDostep;
     </script>
 </head>
-<body style="background: #111;">
+<body style="background: #111; margin: 0;">
 </body>
 </html>
