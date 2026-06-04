@@ -3,17 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Weryfikacja dostępu...</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // Prawidłowe i aktualne dane Twojego projektu z Supabase
         const SUPABASE_URL = "https://zuvzbxgtzwbcdkjjyzgg.supabase.co";
         
-        // Tutaj wklejasz swój długi klucz z Supabase (ten od eyJ...)
+        // TUTAJ wklejasz ten długi klucz anon public (zaczynający się od eyJ...)
         const SUROWY_KLUCZ = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1dnpieGd0endiY2Rramp5emdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1Njc0NTAsImV4cCI6MjA5NjE0MzQ1MH0.bLpNh9YZJ9xqLM08t4LW7uguV1eL-lth8tCfDRzgev8`;
         
         const SUPABASE_KEY = SUROWY_KLUCZ.replace(/\s/g, '');
-
-        // Zmieniliśmy nazwę zmiennej na 'bazaSupabase', żeby nie gryzła się z systemem
-        const bazaSupabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         async function sprawdzDostep() {
             try {
@@ -29,39 +26,62 @@
                     return;
                 }
 
-                // Szukamy w tabeli 'linki-dostepp' przy użyciu nowej nazwy zmiennej
-                const { data, error } = await bazaSupabase
-                    .from('linki-dostepp')
-                    .select('*')
-                    .eq('token', token)
-                    .maybeSingle();
+                // Bezpośrednie i bezpieczne zapytanie HTTP do bazy Supabase bez używania zewnętrznych bibliotek
+                const url = `${SUPABASE_URL}/rest/v1/linki-dostepp?token=eq.${token}&select=*`;
+                const odpowiedz = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Accept': 'application/json',
+                        'Range-Unit': 'items',
+                        'Range': '0-0'
+                    }
+                });
 
-                if (error || !data) {
-                    zablokujStrone("Nieprawidłowy lub nieaktywny token dostępu!");
+                if (!odpowiedz.ok) {
+                    zablokujStrone(`Błąd połączenia z bazą danych! Status: ${odpowiedz.status}`);
                     return;
                 }
 
+                const dane = await odpowiedz.json();
+
+                if (!dane || dane.length === 0) {
+                    zablokujStrone("Nieprawidłowy lub nieaktywny bilet dostępu!");
+                    return;
+                }
+
+                const rekord = dane[0];
                 const czyJuzZalogowany = localStorage.getItem('pwa_zalogowany') === token;
 
                 if (!czyJuzZalogowany) {
-                    if (Number(data.uzyte_urzadzenia) >= Number(data.max_urzadzen)) {
+                    if (Number(rekord.uzyte_urzadzenia) >= Number(rekord.max_urzadzen)) {
                         zablokujStrone("Ten link osiągnął już limit zarejestrowanych urządzeń!");
                         return;
                     }
 
-                    await bazaSupabase
-                        .from('linki-dostepp')
-                        .update({ uzyte_urzadzenia: Number(data.uzyte_urzadzenia) + 1 })
-                        .eq('token', token);
+                    // Aktualizacja licznika urządzeń w bazie danych
+                    const urlUpdate = `${SUPABASE_URL}/rest/v1/linki-dostepp?token=eq.${token}`;
+                    await fetch(urlUpdate, {
+                        method: 'PATCH',
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`,
+                            'Content-Type': 'application/json',
+                            'Prefer': 'return=representation'
+                        },
+                        body: JSON.stringify({ uzyte_urzadzenia: Number(rekord.uzyte_urzadzenia) + 1 })
+                    });
 
                     localStorage.setItem('pwa_token', token);
                     localStorage.setItem('pwa_zalogowany', token);
                 }
 
+                // Sukces: Przekierowanie do ukrytej aplikacji
                 window.location.href = "aplikacja.html";
 
             } catch (err) {
-                zablokujStrone("Wystąpił błąd systemu: " + err.message);
+                zablokujStrone("Wystąpił błąd krytyczny: " + err.message);
             }
         }
 
@@ -70,7 +90,7 @@
                 <div style="display:flex; justify-content:center; align-items:center; height:100vh; background:#111; color:#fff; font-family:sans-serif; text-align:center; padding:20px;">
                     <div>
                         <h1 style="color:#ff4a4a; font-size: 28px; margin-bottom: 10px;">Brak dostępu</h1>
-                        <p style="color:#ccc; font-size: 16px;">${komunikat}</p>
+                        <p style="color:#ccc; font-size: 16px; max-width: 400px; margin: 0 auto;">${komunikat}</p>
                     </div>
                 </div>
             `;
