@@ -5,10 +5,11 @@
     <title>Weryfikacja dostępu...</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // === TUTAJ WKLEJ SWOJE DANE Z SUPABASE ===
-        const SUPABASE_URL = "https://zuvzbxgtzwbcdkjjyzgg.supabase.co/rest/v1/";
-        const SUPABASE_KEY = "sb_publishable_WzOKaCm69ivDtPG-JAXI_A_6b8Ap8iA";
-        // ========================================
+        // Poprawiony adres URL bez podwójnego https://
+        const SUPABASE_URL = "https://vmsolpcoepvbyofidclh.supabase.co";
+        // Twój klucz anon public (zostawiamy bez zmian)
+        const SUPABASE_KEY = "sb_publishable_WzOKaCm69ivDtPG-JAXI_A_6b8Ap8iA
+";
 
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -26,7 +27,7 @@
                     return;
                 }
 
-                // Szukamy tokenu w bazie (poprawiona nazwa z dwoma 'p')
+                // Szukamy tokenu w bazie (tabela: linki-dostepp)
                 const { data, error } = await supabase
                     .from('linki-dostepp')
                     .select('*')
@@ -46,7 +47,7 @@
                         return;
                     }
 
-                    // Zwiększamy licznik urządzeń o 1 (poprawiona nazwa z dwoma 'p')
+                    // Zwiększamy licznik urządzeń o 1
                     await supabase
                         .from('linki-dostepp')
                         .update({ uzyte_urzadzenia: Number(data.uzyte_urzadzenia) + 1 })
@@ -56,11 +57,10 @@
                     localStorage.setItem('pwa_zalogowany', token);
                 }
 
-                // SUKCES: Przekierowujemy do Twojej właściwej aplikacji
+                // Przekierowanie do Twojej właściwej strony
                 window.location.href = "aplikacja.html";
 
             } catch (err) {
-                // Jeśli coś pójdzie nie tak z JS, wyświetli błąd na ekranie
                 zablokujStrone("Wystąpił błąd krytyczny aplikacji: " + err.message);
             }
         }
