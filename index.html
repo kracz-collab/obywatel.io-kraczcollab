@@ -5,14 +5,15 @@
     <title>Weryfikacja dostępu...</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Twój aktualny, prawdziwy URL projektu z Supabase
         const SUPABASE_URL = "https://zuvzbxgtzwbcdkjjyzgg.supabase.co";
         
-        // TUTAJ wklejasz swój bardzo długi klucz anon public (zaczynający się od eyJ...)
-        // Zostaw te ukośne znaczki ` ` na początku i końcu klucza!
-        const SUPABASE_KEY = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1dnpieGd0endiY2Rramp5emdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1Njc0NTAsImV4cCI6MjA5NjE0MzQ1MH0.bLpNh9YZJ9xqLM08t4LW7uguV1eL-lth8tCfDRzgev8`;
+        // Tutaj wklejasz swój długi klucz z Supabase (ten od eyJ...)
+        const SUROWY_KLUCZ = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1dnpieGd0endiY2Rramp5emdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1Njc0NTAsImV4cCI6MjA5NjE0MzQ1MH0.bLpNh9YZJ9xqLM08t4LW7uguV1eL-lth8tCfDRzgev8`;
+        
+        const SUPABASE_KEY = SUROWY_KLUCZ.replace(/\s/g, '');
 
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // Zmieniliśmy nazwę zmiennej na 'bazaSupabase', żeby nie gryzła się z systemem
+        const bazaSupabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         async function sprawdzDostep() {
             try {
@@ -28,8 +29,8 @@
                     return;
                 }
 
-                // Szukamy w tabeli 'linki-dostepp' (z dwoma p)
-                const { data, error } = await supabase
+                // Szukamy w tabeli 'linki-dostepp' przy użyciu nowej nazwy zmiennej
+                const { data, error } = await bazaSupabase
                     .from('linki-dostepp')
                     .select('*')
                     .eq('token', token)
@@ -48,8 +49,7 @@
                         return;
                     }
 
-                    // Aktualizacja w tabeli 'linki-dostepp'
-                    await supabase
+                    await bazaSupabase
                         .from('linki-dostepp')
                         .update({ uzyte_urzadzenia: Number(data.uzyte_urzadzenia) + 1 })
                         .eq('token', token);
