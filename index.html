@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Weryfikacja dostępu...</title>
+    <!-- Ładujemy bazę danych Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // TUTAJ WKLEJ SWOJE DANE Z SUPABASE:
+        const SUPABASE_URL = "https://zuvzbxgtzwbcdkjjyzgg.supabase.co/rest/v1/";
+        const SUPABASE_KEY = "sb_publishable_WzOKaCm69ivDtPG-JAXI_A_6b8Ap8iA";
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function sprawdzDostep() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let token = urlParams.get('token');
+
+            if (!token) {
+                token = localStorage.getItem('pwa_token');
+            }
+
+            if (!token) {
+                zablokujStrone("Brak tokenu dostępu. Kup produkt, aby uzyskać link.");
+                return;
+            }
+
+            // Szukamy tokenu w bazie
+            const { data, error } = await supabase
+                .from('linki_dostepu')
+                .select('*')
+                .eq('token', token)
+                .single();
+
+            if (error || !data) {
+                zablokujStrone("Nieprawidłowy token dostępu!");
+                return;
+            }
+
+            const czyJuzZalogowany = localStorage.getItem('pwa_zalogowany') === token;
+
+            if (!czyJuzZalogowany) {
+                if (data.uzyte_urzadzenia >= data.max_urzadzen) {
+                    zablokujStrone("Ten link osiągnął już limit zarejestrowanych urządzeń!");
+                    return;
+                }
+
+                // Zwiększamy licznik urządzeń o 1
+                await supabase
+                    .from('linki_dostepu')
+                    .update({ uzyte_urzadzenia: data.uzyte_urzadzenia + 1 })
+                    .eq('token', token);
+
+                localStorage.setItem('pwa_token', token);
+                localStorage.setItem('pwa_zalogowany', token);
+            }
+
+            // SUKCES: Przekierowujemy użytkownika do Twojej właściwej aplikacji!
+            window.location.href = "aplikacja.html";
+        }
+
+        function zablokujStrone(komunikat) {
+            document.body.innerHTML = `
+                <div style="display:flex; justify-content:center; align-items:center; height:100vh; background:#111; color:#fff; font-family:sans-serif; text-align:center; padding:20px;">
+                    <div>
+                        <h1 style="color:#ff4a4a;">Brak dostępu</h1>
+                        <p>${komunikat}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.onload = sprawdzDostep;
+    </script>
+</head>
+<body style="background: #111;">
+</body>
+</html>
