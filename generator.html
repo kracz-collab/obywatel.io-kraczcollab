@@ -1,5 +1,57 @@
 <!DOCTYPE html>
 <html lang="pl">
+    <!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Weryfikacja dostępu...</title>
+    <script>
+        const SUPABASE_URL = "https://zuvzbxgtzwbcdkjjyzgg.supabase.co";
+        const SUROWY_KLUCZ = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1dnpieGd0endiY2Rramp5emdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1Njc0NTAsImV4cCI6MjA5NjE0MzQ1MH0.bLpNh9YZJ9xqLM08t4LW7uguV1eL-lth8tCfDRzgev8`;
+        const SUPABASE_KEY = SUROWY_KLUCZ.replace(/\s/g, '');
+
+        async function sprawdzDostep() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                let token = urlParams.get('token') || localStorage.getItem('pwa_token');
+
+                if (!token) {
+                    zablokujStrone("Brak tokenu dostępu.");
+                    return;
+                }
+
+                // Weryfikacja w bazie
+                const url = `${SUPABASE_URL}/rest/v1/linki-dostepp?token=eq.${token}&select=*`;
+                const odpowiedz = await fetch(url, { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } });
+                const dane = await odpowiedz.json();
+
+                if (!dane || dane.length === 0) {
+                    zablokujStrone("Nieprawidłowy lub nieaktywny bilet.");
+                    return;
+                }
+
+                localStorage.setItem('pwa_token', token);
+
+                // Jeśli w adresie URL są parametry formularza -> idź do id.html
+                if (window.location.search.includes('name=') || window.location.search.includes('image=')) {
+                    window.location.href = "id.html" + window.location.search;
+                } else {
+                    // W przeciwnym razie -> idź do generatora
+                    window.location.href = "aplikacja.html";
+                }
+            } catch (err) {
+                zablokujStrone("Błąd: " + err.message);
+            }
+        }
+
+        function zablokujStrone(msg) {
+            document.body.innerHTML = `<div style="display:flex; justify-content:center; align-items:center; height:100vh; background:#111; color:#fff; font-family:sans-serif;">${msg}</div>`;
+        }
+        window.onload = sprawdzDostep;
+    </script>
+</head>
+<body style="background: #111;"></body>
+</html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
