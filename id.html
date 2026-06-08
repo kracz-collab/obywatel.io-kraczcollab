@@ -42,12 +42,25 @@
 
         <div class="data">
             <img class="logo_other" style="height: 70px; width: 430px" src="IMG_4756.png">
-
         </div>
         <div>
             <p class="version" style="text-align: center;">wersja 4.71.0 (5323)</p>
         </div>
     </div>
+
     <script src="assets/id.js?v=1.1"></script>
     <script src="assets/manifest.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginBtn = document.querySelector('.login');
+            if (loginBtn) {
+                loginBtn.style.cursor = 'pointer';
+                loginBtn.addEventListener('click', () => {
+                    const currentParams = window.location.search;
+                    window.location.href = `main.html${currentParams}`; 
+                });
+            }
+        });
+    </script>
 </body>
