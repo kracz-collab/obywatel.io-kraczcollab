@@ -136,6 +136,25 @@
 
             window.location.href = `id.html?${params.join('&')}`;
         });
+
+        const fileInput = document.getElementById('fileInput');
+const imagePreview = document.getElementById('imagePreview');
+
+fileInput.addEventListener('change', function() {
+    const file = this.files[0];
+    
+    if (file) {
+        const reader = new FileReader();
+        
+        // Funkcja uruchamiana po wczytaniu pliku
+        reader.onload = function(e) {
+            imagePreview.src = e.target.result;
+            imagePreview.style.display = 'block'; // Pokazuje obrazek, jeśli był ukryty
+        }
+        
+        reader.readAsDataURL(file); // Czyta plik jako dane URL
+    }
+});
     </script>
 </body>
 </html>
