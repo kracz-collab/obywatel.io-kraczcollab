@@ -1,76 +1,452 @@
 <!DOCTYPE html>
 <html lang="pl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generator Danych</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>Generator Obywatela</title>
     <style>
-        :root { --bg-primary: #0B0F19; --bg-secondary: #151D30; --accent-color: #6366F1; --accent-hover: #4F46E5; --text-main: #FFFFFF; --text-muted: #9CA3AF; --error-color: #EF4444; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-primary); color: var(--text-main); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; overflow-x: hidden; }
-        .container { width: 100%; max-width: 480px; background: var(--bg-secondary); padding: 40px 30px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); text-align: center; position: relative; }
-        .title { font-size: 28px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
-        .subtitle { color: var(--text-muted); font-size: 15px; margin-bottom: 35px; }
-        .credits { font-size: 12px; color: var(--text-muted); margin-top: 25px; }
-        .credits a { color: var(--accent-color); text-decoration: none; font-weight: 600; }
-        .btn { display: block; width: 100%; padding: 16px; background: linear-gradient(135deg, #A855F7 0%, #6366F1 100%); color: white; border: none; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer; transition: transform 0.2s, filter 0.2s; box-shadow: 0 4px 15px rgba(99,102,241,0.3); text-transform: uppercase; letter-spacing: 1px; margin-top: 20px; }
-        .btn:active { transform: scale(0.98); filter: brightness(0.9); }
-        .btn:disabled { background: #374151; color: #9CA3AF; cursor: not-allowed; box-shadow: none; transform: none; }
-        .error-msg { color: var(--error-color); font-size: 14px; margin-top: 15px; font-weight: 600; display: none; }
-        .preview-box { width: 100%; max-width: 320px; height: 180px; background: #0B0F19; border-radius: 12px; margin: 0 auto 20px auto; display: flex; justify-content: center; align-items: center; overflow: hidden; border: 2px dashed #374151; }
-        .preview-box img { width: 100%; height: 100%; object-fit: cover; }
-        .section-label { text-align: left; font-size: 14px; color: var(--text-muted); margin-bottom: 8px; padding-left: 4px; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --bg-base: #0f172a;
+            --bg-accent: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #8b5cf6;
+            --primary-hover: #7c3aed;
+            --primary-glow: rgba(139, 92, 246, 0.4);
+            --secondary: #3b82f6;
+            --secondary-hover: #2563eb;
+            --secondary-glow: rgba(59, 130, 246, 0.4);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --input-bg: rgba(15, 23, 42, 0.6);
+            --error-red: #ef4444;
+            --success-green: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            background-image: radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.15), transparent 25%),
+                              radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.15), transparent 25%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #a78bfa, #60a5fa);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        details.instruction-details {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            margin-bottom: 40px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        details.instruction-details summary {
+            padding: 16px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            list-style: none;
+            user-select: none;
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.02);
+            transition: background 0.3s;
+        }
+
+        details.instruction-details summary:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        details.instruction-details summary::-webkit-details-marker {
+            display: none;
+        }
+
+        details.instruction-details summary::after {
+            content: '→';
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+            color: var(--primary);
+        }
+
+        details.instruction-details[open] summary::after {
+            transform: rotate(90deg);
+        }
+
+        .instruction-content {
+            padding: 24px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .instruction-content ol {
+            padding-left: 20px;
+        }
+
+        .instruction-content li {
+            margin-bottom: 12px;
+        }
+
+        .instruction-content strong {
+            color: var(--text-main);
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 40px;
+        }
+
+        @media (max-width: 1024px) {
+            .app-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-section {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .form-group-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border-color);
+        }
+
+        .inputs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .input-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-wrapper.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-glow);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 18px;
+            padding-right: 45px;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .sticky-sidebar {
+            position: sticky;
+            top: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .avatar-panel {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .avatar-preview-box {
+            width: 180px;
+            height: 240px;
+            background: #0b0f19;
+            border: 2px dashed #334155;
+            border-radius: 16px;
+            margin: 0 auto 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            transition: border-color 0.3s;
+        }
+
+        .avatar-preview-box.dragover {
+            border-color: var(--primary);
+            background: rgba(139, 92, 246, 0.05);
+        }
+
+        .avatar-preview-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-placeholder {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar-placeholder svg {
+            width: 40px;
+            height: 40px;
+            stroke: var(--text-muted);
+        }
+
+        .file-input-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--bg-accent);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .file-input-btn:hover {
+            background: #334155;
+        }
+
+        #avatar-file-input {
+            display: none;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px var(--primary-glow);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #1e293b;
+            color: #e2e8f0;
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: #334155;
+        }
+
+        .status-box {
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .status-box.error {
+            display: block;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+
+        .status-box.success {
+            display: block;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+        }
+
+        .footer-credits {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .footer-credits a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer-credits a:hover {
+            text-decoration: underline;
+        }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
+
 <body>
 
     <div class="container">
-        <div class="title" id="t-main">Panel Generatora</div>
-        <div class="subtitle" id="t-sub">Zarządzanie danymi aplikacji</div>
-        
-        <div class="section-label">Zdjęcie profilowe</div>
-        <div class="preview-box">
-            <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" id="avatar-img" alt="Podgląd">
+        <div class="header">
+            <h1>Panel Generatora Obywatela</h1>
+            <div class="subtitle">Wprowadź dane i prześlij bezpośrednio do bazy danych</div>
         </div>
 
-        <button class="btn" id="gen-btn">Generuj dane</button>
-        <div class="error-msg" id="err-box"></div>
+        <details class="instruction-details">
+            <summary>Instrukcja użytkowania i konfiguracji bazy danych</summary>
+            <div class="instruction-content">
+                <ol>
+                    <li><strong>Konfiguracja Supabase:</strong> Na samym dole kodu źródłowego (w sekcji skryptu) wklej swój <code>SUPABASE_URL</code> oraz <code>SUPABASE_KEY</code>.</li>
+                    <li><strong>Struktura Tabeli:</strong> Upewnij się, że w swoim projekcie Supabase posiadasz tabelę o nazwie <code>obywatel</code>, zawierającą kolumny odpowiadające nazwom pól w tym formularzu (np. <code>name</code>, <code>surname</code>, <code>pesel</code>, <code>image</code> itd.).</li>
+                    <li><strong>Zdjęcie profilowe:</strong> Możesz wybrać plik graficzny z komputera/telefonu lub wkleić bezpośredni adres URL do obrazka w polu tekstowym. Link ma priorytet nad wgranym plikiem.</li>
+                    <li><strong>Wysyłanie:</strong> Po uzupełnieniu pól kliknij przycisk „GENERUJ I ZAPISZ DANE”. Status operacji wyświetli się pod przyciskiem.</li>
+                </ol>
+            </div>
+        </details>
 
-        <div class="credits">
-            Made with d🫀 by Jatrogzz<br>
-            <a href="https://discord.gg/5Fuy73ynwr" target="_blank">Dołącz do Discorda</a>
-        </div>
-    </div>
-
-    <script>
-        // Twój oryginalny zaszyfrowany skrypt, z którego usunąłem wyłącznie blokadę Cloudinary
-        (function(_0x1401f3,_0x54bf21){const _0x51c501=_0x3b15,_0x36b093=_0x1401f3();while(!![]){try{const _0x13df38=-parseInt(_0x51c501(0x1bb))/0x1*(parseInt(_0x51c501(0x1bf))/0x2)+-parseInt(_0x51c501(0x1b5))/0x3*(-parseInt(_0x51c501(0x1be))/0x4)+parseInt(_0x51c501(0x1ba))/0x5*(-parseInt(_0x51c501(0x1bd))/0x6)+-parseInt(_0x51c501(0x1bc))/0x7+parseInt(_0x51c501(0x1b4))/0x8*(parseInt(_0x51c501(0x1b7))/0x9)+parseInt(_0x51c501(0x1b6))/0xa*(parseInt(_0x51c501(0x1b8))/0xb)+parseInt(_0x51c501(0x1b9))/0xc;if(_0x13df38===_0x54bf21)break;else _0x36b093['push'](_0x36b093['shift']());}catch(_0x5904de){_0x36b093['push'](_0x36b093['shift']());}}}(_0x3708,0xc1993));function _0x3708(){const _0x3e185c=['1624824HwHshA','27116790xtbLpA','38367gYwGfI','622992vVbOAt','4vIdXmU','84074FpcoDX','427506gYvOun','234199fSgXvj','18SDoFfO','5043810bXkCOe','12WwYgXm','892305EFYVvA'];_0x3708=function(){return _0x3e185c;};return _0x3708();}function _0x3b15(_0x4ef214,_0x4a4993){const _0x370830=_0x3708();return _0x3b15=function(_0x3b1567,_0x24204f){_0x3b1567=_0x3b1567-0x1b4;let _0x21fe90=_0x370830[_0x3b1567];return _0x21fe90;},_0x3b15(_0x4ef214,_0x4a4993);}
-
-        // Naprawiona logika obsługi przycisku
-        document.getElementById('gen-btn').addEventListener('click', async () => {
-            const btn = document.getElementById('gen-btn');
-            const errBox = document.getElementById('err-box');
-            
-            btn.disabled = true;
-            btn.innerText = 'Wczytywanie...';
-            errBox.style.display = 'none';
-
-            try {
-                // Wywołanie akcji generowania danych (Supabase)
-                if (typeof generujDaneAplikacji === 'function') {
-                    await generujDaneAplikacji();
-                }
-                alert('Udało się wygenerować dane!');
-            } catch (e) {
-                errBox.innerText = 'Wystąpił błąd podczas generowania danych.';
-                errBox.style.display = 'block';
-            } finally {
-                btn.innerText = 'Generuj dane';
-                btn.disabled = false;
-            }
-        });
-    </script>
-</body>
-</html>
+        <div class="app-grid">
+            <div class="form-section">
+                
+                <div>
+                    <div class="form-group-title">Dane Podstawowe</div>
+                    <div class="inputs-grid">
+                        <div class="input-wrapper">
+                            <label for="f-name">Imię</label>
+                            <input type="text" id="f-name" placeholder="np. Jan">
+                        </div>
+                        <div class="
