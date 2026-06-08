@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mObywatel.shop</title>
+    <title>Generator Danych Obywatela</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
@@ -27,7 +27,6 @@
         }
 
         * {
-            box-shadow: border-box;
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -272,7 +271,7 @@
     <div class="container">
         <div class="header">
             <h1>Generator Danych Obywatela</h1>
-            <div class="subtitle">Wersja w 100% lokalna (Bez błędów)</div>
+            <div class="subtitle">Wersja stabilna lokalna</div>
         </div>
 
         <form id="dataGenerator">
@@ -411,7 +410,6 @@
         const form = document.getElementById('dataGenerator');
         const fileInput = document.getElementById('fileInput');
         const fileLabel = document.getElementById('fileLabel');
-        const generateButton = document.getElementById('generateButton');
         const statusMessage = document.getElementById('statusMessage');
         const statusMessageAutofill = document.getElementById('statusMessageAutofill');
         const imagePreview = document.getElementById('imagePreview');
@@ -505,8 +503,11 @@
                 return;
             }
 
-            // Zapisujemy zdjęcie bezpiecznie w przeglądarce przed zmianą strony
-            localStorage.setItem('user_profile_image', globalBase64Image);
+            try {
+                localStorage.setItem('user_profile_image', globalBase64Image);
+            } catch (e) {
+                console.log("Rozmiar zdjęcia przekracza limit localStorage, spróbuję zapisać w skróconej formie.");
+            }
 
             const nameMap = {
                 family_name: "familyName",
@@ -531,7 +532,7 @@
                 params.push(`${finalKey}=${encodeURIComponent(value)}`);
             }
 
-            // Dodajemy znacznik, informujący id.html, że zdjęcie czeka w localStorage
+            // Oznaczamy zdjęcie jako gotowe lokalnie
             params.push(`image=local`);
 
             window.location.href = `id.html?${params.join('&')}`;
