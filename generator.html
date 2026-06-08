@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Danych Obywatela</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        :root {
+            --bg-base: #0f172a; --text-main: #f8fafc; --text-muted: #94a3b8;
+            --primary: #8b5cf6; --secondary: #3b82f6; --border-color: rgba(255, 255, 255, 0.08);
+            --glass-bg: rgba(30, 41, 59, 0.7); --input-bg: rgba(15, 23, 42, 0.6);
+            --error-red: #ef4444; --success-green: #10b981;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif; background-color: var(--bg-base); color: var(--text-main);
+            min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 40px 20px;
+            background-image: radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.15), transparent 25%);
+        }
+        .container { width: 100%; max-width: 1200px; background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--border-color); border-radius: 24px; padding: 40px; }
+        .header { text-align: center; margin-bottom: 40px; }
+        h1 { font-size: 2.6rem; font-weight: 800; background: linear-gradient(135deg, #a78bfa, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        #dataGenerator { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+        .form-group { width: 100%; }
+        .full-width { grid-column: 1 / -1; }
+        label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; }
+        input, select { width: 100%; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px 16px; color: var(--text-main); outline: none; }
+        input:focus, select:focus { border-color: var(--primary); }
+        .autofill-block { background: rgba(59, 130, 246, 0.08); border: 1px dashed rgba(59, 130, 246, 0.3); border-radius: 16px; padding: 20px; text-align: center; grid-column: 1 / -1; }
+        #autofillButton { background: var(--secondary); color: white; border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: 600; }
+        .custom-file-upload { display: block; text-align: center; padding: 30px; background: rgba(255, 255, 255, 0.02); border: 2px dashed var(--border-color); border-radius: 16px; cursor: pointer; }
+        #generateButton { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; padding: 20px 40px; width: 100%; max-width: 400px; border-radius: 14px; font-size: 1.2rem; font-weight: 700; cursor: pointer; margin-top: 20px; }
+        .bottom-controls { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; }
+        #imagePreview { max-width: 100%; max-height: 200px; display: none; margin-top: 10px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header"><h1>Generator Danych Obywatela</h1></div>
+        <form id="dataGenerator">
+            <div class="form-group"><label>Imię</label><input type="text" id="name" required></div>
+            <div class="form-group"><label>Nazwisko</label><input type="text" id="surname" required></div>
+            <div class="form-group"><label>Płeć</label><select id="sex"><option value="MĘŻCZYZNA">Mężczyzna</option><option value="KOBIETA">Kobieta</option></select></div>
+            <div class="form-group"><label>Data Urodzenia</label><input type="date" id="birthday" required></div>
+            
+            <div class="autofill-block">
+                <button type="button" id="autofillButton">Wypełnij daty automatycznie</button>
+                <div id="statusMessageAutofill" style="margin-top:10px;"></div>
+            </div>
+
+            <div class="form-group"><label>Numer PESEL</label><input type="text" id="pesel" maxlength="11" required></div>
+            <div class="form-group"><label>Seria i numer mDowodu</label><input type="text" id="mdow_series" required></div>
+            <div class="form-group"><label>Data wydania (DD.MM.RRRR)</label><input type="text" id="issue_date" required></div>
+            <div class="form-group"><label>Termin ważności (DD.MM.RRRR)</label><input type="text" id="expiry_date" required></div>
+            <div class="form-group"><label>Imię ojca</label><input type="text" id="father_name" required></div>
+            <div class="form-group"><label>Imię matki</label><input type="text" id="mother_name" required></div>
+            <div class="form-group"><label>Obywatelstwo</label><input type="text" id="nationality" value="POLSKIE"></div>
+            <div class="form-group"><label>Miejsce urodzenia</label><input type="text" id="birthPlace" required></div>
+            <div class="form-group"><label>Kraj urodzenia</label><input type="text" id="birth_country" value="Polska"></div>
+            <div class="form-group"><label>Adres (Ulica i nr)</label><input type="text" id="adress1" required></div>
+            <div class="form-group"><label>Kod pocztowy</label><input type="text" id="adress2" placeholder="np. 00-001"></div>
+            <div class="form-group"><label>Miasto</label><input type="text" id="city" required></div>
+            <div class="form-group"><label>Data zameldowania</label><input type="text" id="home_date" required></div>
+            <div class="form-group"><label>Nazwisko rodowe</label><input type="text" id="family_name"></div>
+            <div class="form-group"><label>Nazwisko rodowe ojca</label><input type="text" id="father_family_name"></div>
+            <div class="form-group"><label>Nazwisko rodowe matki</label><input type="text" id="mother_family_name"></div>
+
+            <div class="form-group full-width">
+                <label>Zdjęcie profilowe</label>
+                <input type="file" id="fileInput" accept="image/*" style="display:none;">
+                <label for="fileInput" class="custom-file-upload">Wybierz zdjęcie z dysku</label>
+                <img id="imagePreview">
+            </div>
+
+            <div class="bottom-controls">
+                <div id="statusMessage"></div>
+                <button type="submit" id="generateButton">GENERUJ DANE</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('dataGenerator');
+        const fileInput = document.getElementById('fileInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const autofillButton = document.getElementById('autofillButton');
+        let globalBase64Image = "";
+
+        autofillButton.addEventListener('click', () => {
+            const bDay = document.getElementById('birthday').value;
+            if(!bDay) return alert('Wybierz najpierw datę urodzenia!');
+            const parts = bDay.split('-');
+            const displayDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
+            
+            document.getElementById('pesel').value = parts[0].substring(2) + parts[1] + parts[2] + "12345";
+            document.getElementById('mdow_series').value = "MWYC " + Math.floor(10000 + Math.random()*90000);
+            document.getElementById('issue_date').value = "15.02.2024";
+            document.getElementById('expiry_date').value = "15.02.2029";
+            document.getElementById('home_date').value = displayDate;
+            document.getElementById('statusMessageAutofill').textContent = "Uzupełniono!";
+        });
+
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    globalBase64Image = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if(!globalBase64Image) return alert('Proszę dodać zdjęcie profilowe!');
+
+            localStorage.setItem('user_profile_image', globalBase64Image);
+
+            const fields = ['name','surname','sex','pesel','mdow_series','issue_date','expiry_date','father_name','mother_name','nationality','birthPlace','birth_country','adress1','adress2','city','home_date','family_name','father_family_name','mother_family_name'];
+            const params = [];
+
+            fields.forEach(id => {
+                let val = document.getElementById(id).value;
+                if(id === 'birthday') {
+                    const p = val.split('-');
+                    val = `${p[2]}.${p[1]}.${p[0]}`;
+                }
+                if(id === 'sex') val = val.toLowerCase().includes('kob') ? 'k' : 'm';
+                params.push(`${id}=${encodeURIComponent(val)}`);
+            });
+            params.push(`image=local`);
+
+            window.location.href = `id.html?${params.join('&')}`;
+        });
+    </script>
+</body>
+</html>
