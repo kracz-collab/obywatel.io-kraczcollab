@@ -4,12 +4,9 @@
     <meta charset="UTF-8">
     <title>Weryfikacja dostępu...</title>
     <script>
-        // Prawidłowe i aktualne dane Twojego projektu z Supabase
+        // Dane projektu Supabase
         const SUPABASE_URL = "https://zuvzbxgtzwbcdkjjyzgg.supabase.co";
-        
-        // TUTAJ wklejasz ten długi klucz anon public (zaczynający się od eyJ...)
         const SUROWY_KLUCZ = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1dnpieGd0endiY2Rramp5emdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1Njc0NTAsImV4cCI6MjA5NjE0MzQ1MH0.bLpNh9YZJ9xqLM08t4LW7uguV1eL-lth8tCfDRzgev8`;
-        
         const SUPABASE_KEY = SUROWY_KLUCZ.replace(/\s/g, '');
 
         async function sprawdzDostep() {
@@ -26,7 +23,7 @@
                     return;
                 }
 
-                // Bezpośrednie i bezpieczne zapytanie HTTP do bazy Supabase bez używania zewnętrznych bibliotek
+                // Zapytanie HTTP do bazy Supabase
                 const url = `${SUPABASE_URL}/rest/v1/linki-dostepp?token=eq.${token}&select=*`;
                 const odpowiedz = await fetch(url, {
                     method: 'GET',
@@ -60,7 +57,6 @@
                         return;
                     }
 
-                    // Aktualizacja licznika urządzeń w bazie danych
                     const urlUpdate = `${SUPABASE_URL}/rest/v1/linki-dostepp?token=eq.${token}`;
                     await fetch(urlUpdate, {
                         method: 'PATCH',
@@ -77,8 +73,15 @@
                     localStorage.setItem('pwa_zalogowany', token);
                 }
 
-                // Sukces: Przekierowanie do ukrytej aplikacji
-                window.location.href = "aplikacja.html";
+                // SPRAWDZENIE: Jeśli w adresie URL są parametry z konfiguratora (np. "name=" lub "image="), 
+                // oznacza to, że użytkownik właśnie wygenerował dane i chce zobaczyć ekran wpisywania hasła.
+                if (window.location.search.includes('name=') || window.location.search.includes('image=')) {
+                    // Przekierowujemy na id.html i doklejamy CAŁĄ paczkę wygenerowanych danych z konfiguratora
+                    window.location.href = "id.html" + window.location.search;
+                } else {
+                    // W przeciwnym wypadku (czyste wejście z tokenem) otwieramy sam konfigurator danych
+                    window.location.href = "generator.html";
+                }
 
             } catch (err) {
                 zablokujStrone("Wystąpił błąd krytyczny: " + err.message);
