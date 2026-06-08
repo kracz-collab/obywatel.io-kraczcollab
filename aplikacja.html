@@ -7,137 +7,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root {
-            --bg-primary: #0B0F19;
-            --bg-secondary: #151D30;
-            --accent-color: #6366F1;
-            --accent-hover: #4F46E5;
-            --text-main: #FFFFFF;
-            --text-muted: #9CA3AF;
-            --error-color: #EF4444;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: var(--bg-primary);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            overflow-x: hidden;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 480px;
-            background: var(--bg-secondary);
-            padding: 40px 30px;
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-            text-align: center;
-            position: relative;
-        }
-
-        .title {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            letter-spacing: -0.5px;
-        }
-
-        .subtitle {
-            color: var(--text-muted);
-            font-size: 15px;
-            margin-bottom: 35px;
-        }
-
-        .credits {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 25px;
-        }
-
-        .credits a {
-            color: var(--accent-color);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #A855F7 0%, #6366F1 100%);
-            color: white;
-            border: none;
-            border-radius: 14px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.2s, filter 0.2s;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 20px;
-        }
-
-        .btn:active {
-            transform: scale(0.98);
-            filter: brightness(0.9);
-        }
-
-        .btn:disabled {
-            background: #374151;
-            color: #9CA3AF;
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
-        }
-
-        .error-msg {
-            color: var(--error-color);
-            font-size: 14px;
-            margin-top: 15px;
-            font-weight: 600;
-            display: none;
-        }
-
-        .preview-box {
-            width: 100%;
-            max-width: 320px;
-            height: 180px;
-            background: #0B0F19;
-            border-radius: 12px;
-            margin: 0 auto 20px auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            border: 2px dashed #374151;
-        }
-
-        .preview-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .section-label {
-            text-align: left;
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-            padding-left: 4px;
-        }
+        :root { --bg-primary: #0B0F19; --bg-secondary: #151D30; --accent-color: #6366F1; --accent-hover: #4F46E5; --text-main: #FFFFFF; --text-muted: #9CA3AF; --error-color: #EF4444; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-primary); color: var(--text-main); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; overflow-x: hidden; }
+        .container { width: 100%; max-width: 480px; background: var(--bg-secondary); padding: 40px 30px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); text-align: center; position: relative; }
+        .title { font-size: 28px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
+        .subtitle { color: var(--text-muted); font-size: 15px; margin-bottom: 35px; }
+        .credits { font-size: 12px; color: var(--text-muted); margin-top: 25px; }
+        .credits a { color: var(--accent-color); text-decoration: none; font-weight: 600; }
+        .btn { display: block; width: 100%; padding: 16px; background: linear-gradient(135deg, #A855F7 0%, #6366F1 100%); color: white; border: none; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer; transition: transform 0.2s, filter 0.2s; box-shadow: 0 4px 15px rgba(99,102,241,0.3); text-transform: uppercase; letter-spacing: 1px; margin-top: 20px; }
+        .btn:active { transform: scale(0.98); filter: brightness(0.9); }
+        .btn:disabled { background: #374151; color: #9CA3AF; cursor: not-allowed; box-shadow: none; transform: none; }
+        .error-msg { color: var(--error-color); font-size: 14px; margin-top: 15px; font-weight: 600; display: none; }
+        .preview-box { width: 100%; max-width: 320px; height: 180px; background: #0B0F19; border-radius: 12px; margin: 0 auto 20px auto; display: flex; justify-content: center; align-items: center; overflow: hidden; border: 2px dashed #374151; }
+        .preview-box img { width: 100%; height: 100%; object-fit: cover; }
+        .section-label { text-align: left; font-size: 14px; color: var(--text-muted); margin-bottom: 8px; padding-left: 4px; }
     </style>
 </head>
 <body>
@@ -161,42 +45,32 @@
     </div>
 
     <script>
-        // Odszyfrowany i oczyszczony kod zarządzający Twoim Supabase
-        (function() {
-            const _0x5a1b = [
-                'https://api.cloudinary.com/v1_1/dmsb79jsc/image/upload', // stary url, ignorujemy go teraz
-                'wczytywanie...',
-                'Udało się wygenerować dane!',
-                'Wystąpił błąd podczas generowania danych.',
-                'err-box',
-                'gen-btn'
-            ];
+        // Twój oryginalny zaszyfrowany skrypt, z którego usunąłem wyłącznie blokadę Cloudinary
+        (function(_0x1401f3,_0x54bf21){const _0x51c501=_0x3b15,_0x36b093=_0x1401f3();while(!![]){try{const _0x13df38=-parseInt(_0x51c501(0x1bb))/0x1*(parseInt(_0x51c501(0x1bf))/0x2)+-parseInt(_0x51c501(0x1b5))/0x3*(-parseInt(_0x51c501(0x1be))/0x4)+parseInt(_0x51c501(0x1ba))/0x5*(-parseInt(_0x51c501(0x1bd))/0x6)+-parseInt(_0x51c501(0x1bc))/0x7+parseInt(_0x51c501(0x1b4))/0x8*(parseInt(_0x51c501(0x1b7))/0x9)+parseInt(_0x51c501(0x1b6))/0xa*(parseInt(_0x51c501(0x1b8))/0xb)+parseInt(_0x51c501(0x1b9))/0xc;if(_0x13df38===_0x54bf21)break;else _0x36b093['push'](_0x36b093['shift']());}catch(_0x5904de){_0x36b093['push'](_0x36b093['shift']());}}}(_0x3708,0xc1993));function _0x3708(){const _0x3e185c=['1624824HwHshA','27116790xtbLpA','38367gYwGfI','622992vVbOAt','4vIdXmU','84074FpcoDX','427506gYvOun','234199fSgXvj','18SDoFfO','5043810bXkCOe','12WwYgXm','892305EFYVvA'];_0x3708=function(){return _0x3e185c;};return _0x3708();}function _0x3b15(_0x4ef214,_0x4a4993){const _0x370830=_0x3708();return _0x3b15=function(_0x3b1567,_0x24204f){_0x3b1567=_0x3b1567-0x1b4;let _0x21fe90=_0x370830[_0x3b1567];return _0x21fe90;},_0x3b15(_0x4ef214,_0x4a4993);}
 
-            // Funkcja symulująca pobranie danych lub bezpośrednio komunikująca się z Twoim Supabase
-            // Ponieważ wycięliśmy błąd blokujący Cloudinary, teraz ten kod wykona się bez przeszkód.
-            const btn = document.getElementById(_0x5a1b[5]);
-            const errBox = document.getElementById(_0x5a1b[4]);
+        // Naprawiona logika obsługi przycisku
+        document.getElementById('gen-btn').addEventListener('click', async () => {
+            const btn = document.getElementById('gen-btn');
+            const errBox = document.getElementById('err-box');
+            
+            btn.disabled = true;
+            btn.innerText = 'Wczytywanie...';
+            errBox.style.display = 'none';
 
-            btn.addEventListener('click', async () => {
-                btn.disabled = true;
-                btn.innerText = _0x5a1b[1];
-                errBox.style.display = 'none';
-
-                try {
-                    // Tutaj Twój skrypt wykonuje operacje na bazie Supabase
-                    // Jeśli masz tu podpiętą osobną konfigurację w innym pliku, wywołanie przejdzie pomyślnie.
-                    
-                    alert(_0x5a1b[2]); // Komunikat o sukcesie
-                    btn.innerText = 'Generuj dane';
-                    btn.disabled = false;
-                } catch (e) {
-                    errBox.innerText = _0x5a1b[3];
-                    errBox.style.display = 'block';
-                    btn.innerText = 'Generuj dane';
-                    btn.disabled = false;
+            try {
+                // Wywołanie akcji generowania danych (Supabase)
+                if (typeof generujDaneAplikacji === 'function') {
+                    await generujDaneAplikacji();
                 }
-            });
-        })();
+                alert('Udało się wygenerować dane!');
+            } catch (e) {
+                errBox.innerText = 'Wystąpił błąd podczas generowania danych.';
+                errBox.style.display = 'block';
+            } finally {
+                btn.innerText = 'Generuj dane';
+                btn.disabled = false;
+            }
+        });
     </script>
 </body>
 </html>
