@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html lang="pl">
 <head>
     <title>mObywatel</title>
     <meta charset="UTF-8">
@@ -8,7 +10,6 @@
     <link rel="shortcut icon" href="https://i.imgur.com/U7TRg0V.png">
 
     <meta name="theme-color" content="#121212">
-
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=0.8, user-scalable=no">
 
@@ -31,14 +32,14 @@
         <div class="password_grid">
             <p class="password_text">Hasło</p>
             <div class="input_holder">
-                <input class="password_input">
+                <input type="password" class="password_input">
                 <div class="eye"></div>
             </div>
             <p class="forgot_password">Nie pamiętasz hasła?</p>
         </div>
     </div>
     <div class="bottom">
-        <p class="login">Zaloguj się</p>
+        <p class="login" id="submitLogin">Zaloguj się</p>
 
         <div class="data">
             <img class="logo_other" style="height: 70px; width: 430px" src="IMG_4756.png">
@@ -53,14 +54,21 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const loginBtn = document.querySelector('.login');
+            const loginBtn = document.getElementById('submitLogin');
             if (loginBtn) {
-                loginBtn.style.cursor = 'pointer';
-                loginBtn.addEventListener('click', () => {
+                // Klonujemy przycisk, aby usunąć domyślne akcje ze starego id.js kierujące na main.html
+                const newLoginBtn = loginBtn.cloneNode(true);
+                loginBtn.parentNode.replaceChild(newLoginBtn, loginBtn);
+
+                newLoginBtn.addEventListener('click', () => {
+                    // Pobieramy parametry URL (imię, nazwisko, PESEL itp.) odebrane z aplikacja2.html
                     const currentParams = window.location.search;
-                    window.location.href = `main.html${currentParams}`; 
+                    
+                    // Przekierowujemy do poprawnego pliku mobywatel.html przekazując parametry
+                    window.location.href = `mobywatel.html${currentParams}`;
                 });
             }
         });
     </script>
 </body>
+</html>
