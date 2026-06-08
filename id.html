@@ -31,66 +31,23 @@
         <div class="password_grid">
             <p class="password_text">Hasło</p>
             <div class="input_holder">
-                <input type="password" class="password_input" id="passInput">
-                <div class="eye" id="eyeBtn"></div>
+                <input class="password_input">
+                <div class="eye"></div>
             </div>
             <p class="forgot_password">Nie pamiętasz hasła?</p>
         </div>
     </div>
     <div class="bottom">
-        <p class="login" id="loginBtn" style="cursor: pointer; user-select: none;">Zaloguj się</p>
+        <p class="login">Zaloguj się</p>
 
         <div class="data">
             <img class="logo_other" style="height: 70px; width: 430px" src="IMG_4756.png">
+
         </div>
         <div>
             <p class="version" style="text-align: center;">wersja 4.71.0 (5323)</p>
         </div>
     </div>
-
+    <script src="assets/id.js?v=1.1"></script>
     <script src="assets/manifest.js"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const loginBtn = document.getElementById('loginBtn');
-            const passInput = document.getElementById('passInput');
-            const eyeBtn = document.getElementById('eyeBtn');
-
-            // 1. Obsługa pokazywania/ukrywania hasła (oko)
-            if (eyeBtn && passInput) {
-                eyeBtn.addEventListener('click', () => {
-                    if (passInput.type === 'password') {
-                        passInput.type = 'text';
-                        eyeBtn.classList.add('active'); // jeśli miałeś w CSS klasę aktywnego oka
-                    } else {
-                        passInput.type = 'password';
-                        eyeBtn.classList.remove('active');
-                    }
-                });
-            }
-
-            // 2. Obsługa kliknięcia "Zaloguj się"
-            if (loginBtn) {
-                loginBtn.addEventListener('click', () => {
-                    // Pobieramy uid z aktualnego adresu URL (?uid=...)
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const uid = urlParams.get('uid');
-
-                    if (!uid) {
-                        alert('Błąd: Brak identyfikatora UID w adresie URL! Wróć do generatora.');
-                        return;
-                    }
-
-                    // =========================================================================
-                    // TUTAJ WPISZ NAZWĘ PLIKU, KTÓRY JEST WŁAŚCIWYM DOWODEM OBYWATELA!
-                    // np. 'main.html', 'dowod.html', 'dashboard.html'
-                    // =========================================================================
-                    const NAZWA_PLIKU_DOWODU = 'main.html'; 
-                    
-                    // Przekierowanie na stronę główną dowodu z zachowaniem identyfikatora z bazy Supabase
-                    window.location.href = `${NAZWA_PLIKU_DOWODU}?uid=${uid}`;
-                });
-            }
-        });
-    </script>
 </body>
